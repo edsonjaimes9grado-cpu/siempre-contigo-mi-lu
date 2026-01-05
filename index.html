@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Para ti 🎀</title>
+
+<style>
+  :root{
+    --sky-1:#0b1d3a;
+    --sky-2:#000000;
+  }
+
+  body{
+    margin:0;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Georgia', serif;
+    color:white;
+    background: radial-gradient(circle at bottom, var(--sky-1), var(--sky-2));
+    transition: background 2.5s ease;
+  }
+
+  /* ⭐ Estrellas */
+  .estrellas{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+  .estrellas span{
+    position:absolute;
+    background:white;
+    border-radius:50%;
+    opacity:.8;
+    animation: parpadeo infinite alternate;
+  }
+  @keyframes parpadeo{
+    from{opacity:.2; transform:scale(1)}
+    to{opacity:1; transform:scale(1.15)}
+  }
+
+  /* 🌠 Estrella fugaz */
+  .estrella-fugaz{
+    position:fixed;
+    width:180px; height:2px;
+    background:linear-gradient(to right, transparent, white);
+    opacity:0;
+    z-index:2;
+    transform:rotate(-20deg);
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+    pointer-events:none;
+  }
+  .estrella-fugaz.animar{ animation: disparo 1s ease-out forwards; }
+  @keyframes disparo{
+    from{transform:translate(0,0) rotate(-20deg); opacity:1}
+    to{transform:translate(520px,240px) rotate(-20deg); opacity:0}
+  }
+
+  /* 👥 Pareja */
+  .pareja{
+    position:fixed; bottom:14px; left:50%;
+    transform:translateX(-50%);
+    display:flex; gap:18px;
+    z-index:4; pointer-events:none;
+  }
+  .persona{
+    width:40px; height:80px;
+    background:black;
+    border-radius:20px 20px 10px 10px;
+  }
+  .persona::before{
+    content:"";
+    display:block;
+    width:30px; height:30px;
+    background:black;
+    border-radius:50%;
+    margin:-25px auto 0;
+  }
+  .p1{transform:rotate(-5deg)}
+  .p2{transform:rotate(5deg)}
+
+  /* 🖼️ Foto recuerdo */
+  .foto-recuerdo{
+    position:fixed;
+    width:200px;
+    max-width:70vw;
+    border-radius:14px;
+    opacity:0;
+    z-index:3;
+    transition:opacity 2s ease, transform 2s ease;
+    box-shadow:0 10px 30px rgba(0,0,0,.6);
+    pointer-events:none;
+    transform: translateY(10px);
+    filter: brightness(0.98) contrast(1.05);
+  }
+  .foto-recuerdo.mostrar{
+    opacity:1;
+    transform: translateY(0);
+  }
+
+  /* 🎛️ Tarjeta */
+  .contenedor{
+    position:relative;
+    z-index:6;
+    padding:20px 26px;
+    border-radius:18px;
+    background:rgba(0,0,0,0.25);
+    backdrop-filter: blur(7px);
+    border:1px solid rgba(255,255,255,0.12);
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    text-align:center;
+    min-width: 280px;
+    max-width: 88vw;
+    animation: respirar 5.5s ease-in-out infinite;
+  }
+  @keyframes respirar{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-2px); }
+  }
+  .contenedor h1{
+    margin:0;
+    font-size:28px;
+    text-shadow: 0 0 12px rgba(255,255,255,0.22);
+  }
+  #contador{
+    margin-top:10px;
+    font-size:20px;
+    line-height:1.4;
+    text-shadow: 0 0 10px rgba(255,255,255,0.18);
+    opacity:0.98;
+    min-height: 92px;
+  }
+  #frase{
+    margin-top:12px;
+    font-size:15px;
+    opacity:0.9;
+    min-height: 22px;
+    transition: opacity 1.2s ease;
+  }
+  #nowPlaying{
+    margin-top:10px;
+    font-size:12.5px;
+    opacity:0.75;
+  }
+
+  /* 🎀 Botón final Canva */
+  .boton-final{
+    margin-top: 16px;
+    background: linear-gradient(135deg, #ff9ecb, #ff6fae);
+    color: #fff;
+    border: none;
+    border-radius: 22px;
+    padding: 12px 22px;
+    font-size: 15px;
+    font-family: 'Georgia', serif;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(255,150,200,0.55);
+    animation: latido 2.5s infinite;
+  }
+  @keyframes latido{
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.07); }
+  }
+
+  /* 🎵 Controles música */
+  .controles{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:10;
+    display:flex;
+    gap:10px;
+  }
+  .controles button{
+    background:rgba(0,0,0,.5);
+    color:white;
+    border:1px solid rgba(255,255,255,.3);
+    border-radius:18px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-size:18px;
+    backdrop-filter: blur(6px);
+  }
+  .controles button:hover{ background:rgba(255,255,255,0.1); }
+
+  /* 🌌 Viñeta */
+  .vinieta{
+    position:fixed; inset:0;
+    background: radial-gradient(circle at center, rgba(0,0,0,0) 60%, rgba(0,0,0,0.45) 100%);
+    z-index:7; pointer-events:none;
+  }
+
+  /* ⭐ Mensaje 143 en estrellas */
+  .mensaje-estrellas{
+    position: fixed;
+    top: 12vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 140px;
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 1.4s ease;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.35));
+  }
+  .mensaje-estrellas.show{ opacity: 1; }
+  .mensaje-estrellas .dot{
+    position:absolute;
+    border-radius:50%;
+    background:white;
+    opacity:0.85;
+    animation: twinkle143 1.6s infinite alternate;
+  }
+  @keyframes twinkle143{
+    from{ opacity:0.35; transform:scale(1); }
+    to{ opacity:1; transform:scale(1.35); }
+  }
+
+  /* 🛠️ Debug */
+  .debug{
+    position:fixed;
+    left:12px;
+    bottom:12px;
+    z-index:9999;
+    font-size:12px;
+    padding:8px 10px;
+    border-radius:12px;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.15);
+    max-width: 75vw;
+    text-align:left;
+    display:none;
+  }
+  .debug strong{ display:block; margin-bottom:4px; }
+</style>
+</head>
+
+<body>
+  <div class="estrellas" id="estrellas"></div>
+  <div id="mensaje143" class="mensaje-estrellas" aria-hidden="true"></div>
+  <div class="estrella-fugaz" id="shootingStar"></div>
+
+  <div class="pareja">
+    <div class="persona p1"></div>
+    <div class="persona p2"></div>
+  </div>
+
+  <img id="fotoRecuerdo" class="foto-recuerdo" alt="recuerdo">
+
+  <div class="contenedor">
+    <h1>Falta poco para nuestro momento ❤️</h1>
+    <p id="contador">Cargando…</p>
+    <div id="frase"></div>
+    <div id="nowPlaying">🎶 Sonando ahora: —</div>
+
+    <a id="linkFinal" href="#" target="_blank" style="display:none; text-decoration:none;">
+      <button class="boton-final">✨ Ver nuestro momento ✨</button>
+    </a>
+  </div>
+
+  <audio id="musica" preload="auto"></audio>
+
+  <div class="controles">
+    <button id="btnPlay">🎀</button>
+    <button id="btnNext">⏭️</button>
+  </div>
+
+  <div class="vinieta"></div>
+
+  <div class="debug" id="debug">
+    <strong>Debug:</strong>
+    <div id="debugText"></div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  function showDebug(msg){
+    const box = document.getElementById("debug");
+    const t = document.getElementById("debugText");
+    if (!box || !t) return;
+    t.innerHTML = msg;
+    box.style.display = "block";
+  }
+
+  window.addEventListener("error", (e) => {
+    showDebug("Error de JavaScript: " + (e.message || "desconocido"));
+  });
+
+  function headCheck(file){
+    // En local puede fallar HEAD, pero sirve en hosting; no rompe nada.
+    try{
+      fetch(file, {method:"HEAD"}).then(r=>{
+        if(!r.ok) showDebug("No encuentro el archivo: <b>"+file+"</b> (revisa nombre exacto).");
+      }).catch(()=>{});
+    }catch(_){}
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+
+    /* (10) Cielo por hora */
+    function setSkyByTime(){
+      const h = new Date().getHours();
+      if (h >= 0 && h <= 5){
+        document.documentElement.style.setProperty('--sky-1', '#08152f');
+        document.documentElement.style.setProperty('--sky-2', '#000000');
+      } else if (h >= 6 && h <= 8){
+        document.documentElement.style.setProperty('--sky-1', '#14244a');
+        document.documentElement.style.setProperty('--sky-2', '#02020a');
+      } else if (h >= 9 && h <= 17){
+        document.documentElement.style.setProperty('--sky-1', '#0b1d3a');
+        document.documentElement.style.setProperty('--sky-2', '#000000');
+      } else {
+        document.documentElement.style.setProperty('--sky-1', '#111a45');
+        document.documentElement.style.setProperty('--sky-2', '#000000');
+      }
+    }
+    setSkyByTime();
+    setInterval(setSkyByTime, 60*1000);
+
+    /* ⭐ Estrellas */
+    const estrellas = document.getElementById("estrellas");
+    if(!estrellas){ showDebug("No existe #estrellas"); return; }
+    for(let i=0;i<180;i++){
+      const s=document.createElement("span");
+      const size=Math.random()*2+1;
+      s.style.width=size+"px";
+      s.style.height=size+"px";
+      s.style.left=Math.random()*100+"vw";
+      s.style.top=Math.random()*100+"vh";
+      s.style.animationDuration=(Math.random()*3+1)+"s";
+      estrellas.appendChild(s);
+    }
+
+    /* 🌠 Estrella fugaz */
+    const star = document.getElementById("shootingStar");
+    setInterval(()=>{
+      const w=window.innerWidth, h=window.innerHeight;
+      star.style.left = Math.floor(Math.random()*(w*0.35)) + "px";
+      star.style.top  = Math.floor(Math.random()*(h*0.35)) + "px";
+      star.classList.remove("animar");
+      void star.offsetWidth;
+      star.classList.add("animar");
+    }, 15000);
+
+    /* ⏳ Cuenta regresiva + liberar Canva */
+    const contador = document.getElementById("contador");
+    const linkFinal = document.getElementById("linkFinal");
+    const CANVA_URL = "https://www.canva.com/design/DAG9hRarcWo/r9AAD5WGFlO1x5m_8uyeww/edit?utm_content=DAG9hRarcWo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"; // 👈 CAMBIA ESTO
+
+    // fecha objetivo: 14 feb 2026 20:00
+    const fecha = new Date(2026, 0, 5, 2, 1, 0).getTime();
+
+    setInterval(()=>{
+      const d = fecha - Date.now();
+
+      if(d <= 0){
+        contador.innerHTML = "🎀 Este es nuestro momento 🎀";
+        if (CANVA_URL && CANVA_URL.startsWith("http")){
+          linkFinal.href = CANVA_URL;
+          linkFinal.style.display = "block";
+        } else {
+          showDebug("Te falta pegar el link de Canva en CANVA_URL.");
+        }
+        return;
+      }
+
+      const dias=Math.floor(d/86400000);
+      const h=Math.floor(d/3600000)%24;
+      const m=Math.floor(d/60000)%60;
+      const s=Math.floor(d/1000)%60;
+      contador.innerHTML = `${dias} días<br>${h} horas<br>${m} minutos<br>${s} segundos`;
+    }, 1000);
+
+    /* (4) Frases románticas */
+    const fraseEl = document.getElementById("frase");
+    const frases = [
+      "Te elegiría mil veces.",
+      "Cada segundo me acerca a ti.",
+      "Nuestro cielo tiene tu nombre.",
+      "Eres mi lugar favorito.",
+      "Lo mejor aún está por llegar.",
+      "Quédate… siempre."
+    ];
+    let idxFrase = 0;
+    function cambiarFrase(){
+      fraseEl.style.opacity = 0;
+      setTimeout(()=>{
+        fraseEl.textContent = "✨ " + frases[idxFrase];
+        fraseEl.style.opacity = 0.9;
+        idxFrase = (idxFrase + 1) % frases.length;
+      }, 800);
+    }
+    cambiarFrase();
+    setInterval(cambiarFrase, 9000);
+
+    /* 🖼️ Fotos (tus nombres exactos .JPG) */
+    const fotos = ["foto1.JPG","foto2.JPG","foto3.JPG","foto4.JPG","foto5.JPG","foto6.JPG"];
+    fotos.forEach(headCheck);
+    const foto = document.getElementById("fotoRecuerdo");
+    let fi = 0;
+
+    function posicionFoto(){
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const topMin = 25;
+      const topMax = Math.max(topMin, Math.floor(h * 0.35));
+      const lado = Math.random() < 0.5 ? "izq" : "der";
+      const ancho = 200;
+      const margen = 14;
+      const centro1 = w * 0.32;
+      const centro2 = w * 0.68;
+
+      let x;
+      if (lado === "izq"){
+        const maxX = Math.max(margen, Math.floor(centro1 - ancho - margen));
+        x = Math.floor(Math.random() * (maxX - margen + 1)) + margen;
+      } else {
+        const minX = Math.min(w - ancho - margen, Math.floor(centro2 + margen));
+        const maxX = Math.max(minX, w - ancho - margen);
+        x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+      }
+
+      const y = Math.floor(Math.random() * (topMax - topMin + 1)) + topMin;
+      return {x,y};
+    }
+
+    setInterval(()=>{
+      const {x,y} = posicionFoto();
+      foto.src = fotos[fi];
+      foto.style.left = x+"px";
+      foto.style.top  = y+"px";
+      foto.classList.add("mostrar");
+      setTimeout(()=>foto.classList.remove("mostrar"), 5200);
+      fi = (fi + 1) % fotos.length;
+    }, 12000);
+
+    /* 🎶 Música + fade + nombre real */
+    const musica = document.getElementById("musica");
+    const btnPlay = document.getElementById("btnPlay");
+    const btnNext = document.getElementById("btnNext");
+    const nowPlaying = document.getElementById("nowPlaying");
+
+    const playlist = [
+      "cancion1.mp3","cancion2.mp3","cancion3.mp3","cancion4.mp3","cancion5.mp3",
+      "cancion6.mp3","cancion7.mp3","cancion8.mp3","cancion9.mp3","cancion10.mp3","cancion11.mp3"
+    ];
+    playlist.forEach(headCheck);
+
+    // ✅ AQUÍ pones nombres reales (edita lo de la derecha)
+    const nombresCanciones = {
+      "cancion1.mp3":"(voy a extrañarte💝)",
+      "cancion2.mp3":"(Brillas💫)",
+      "cancion3.mp3":"(Viernes 13👥)",
+      "cancion4.mp3":"(Yellow🌔)",
+      "cancion5.mp3":"(Eres✨)",
+      "cancion6.mp3":"(Dejame💞)",
+      "cancion7.mp3":"(quiereme asi🥰)",
+      "cancion8.mp3":"(Amar ccomo tu💝)",
+      "cancion9.mp3":"(Ivonny Bonita🎀)",
+      "cancion10.mp3":"(Disfruto😘)",
+      "cancion11.mp3":"(Bajo el agua🎸)"
+    };
+    function nombreBonito(file){
+      return nombresCanciones[file] || file.replace(".mp3","");
+    }
+
+    let mi = Math.floor(Math.random()*playlist.length);
+    musica.src = playlist[mi];
+    musica.volume = 0.0; // para fade in
+
+    function actualizarUI(){
+      btnPlay.textContent = musica.paused ? "🎀" : "⏸️";
+      nowPlaying.textContent = `🎶 Sonando ahora: ${nombreBonito(playlist[mi])}`;
+    }
+
+    let fadeTimer = null;
+    function fadeTo(target, ms=700){
+      clearInterval(fadeTimer);
+      const start = musica.volume;
+      const steps = 18;
+      const stepTime = Math.max(15, Math.floor(ms/steps));
+      let n = 0;
+
+      fadeTimer = setInterval(()=>{
+        n++;
+        const t = n/steps;
+        musica.volume = Math.max(0, Math.min(1, start + (target-start)*t));
+        if(n>=steps) clearInterval(fadeTimer);
+      }, stepTime);
+    }
+
+    function randomIndex(){
+      if(playlist.length<=1) return 0;
+      let r = Math.floor(Math.random()*playlist.length);
+      if(r===mi) r = (r+1) % playlist.length;
+      return r;
+    }
+
+    async function cargarYPlay(indice){
+      mi = indice;
+      musica.pause();
+      musica.currentTime = 0;
+      musica.src = playlist[mi];
+      musica.load();
+      actualizarUI();
+      try{
+        await musica.play();           // solo funciona tras click del usuario
+        fadeTo(0.25, 750);
+        actualizarUI();
+      }catch(e){
+        actualizarUI();
+      }
+    }
+
+    // 🎀 play/pausa (solo cuando ella toque)
+    btnPlay.addEventListener("click", async ()=>{
+      if(musica.paused){
+        try{
+          await musica.play();
+          fadeTo(0.25, 750);
+        }catch(e){}
+        actualizarUI();
+      }else{
+        fadeTo(0.0, 450);
+        setTimeout(()=>{
+          musica.pause();
+          actualizarUI();
+        }, 480);
+      }
+    });
+
+    // ⏭️ siguiente aleatorio
+    btnNext.addEventListener("click", ()=>{
+      cargarYPlay(randomIndex());
+    });
+
+    // termina -> aleatorio
+    musica.addEventListener("ended", ()=>{
+      cargarYPlay(randomIndex());
+    });
+
+    actualizarUI();
+
+    /* ⭐ 143 en estrellas */
+    const mensaje143 = document.getElementById("mensaje143");
+    const DIGITOS = {
+      "1":[ "00100","01100","00100","00100","00100","00100","01110" ],
+      "4":[ "01010","01010","01010","01110","00010","00010","00010" ],
+      "3":[ "01110","00010","00010","00110","00010","00010","01110" ]
+    };
+
+    function construir143(){
+      mensaje143.innerHTML = "";
+      const texto = ["1","4","3"];
+      const cell = 10, jitter = 1.8, gap = 18;
+      let offsetX = 0;
+
+      texto.forEach((d)=>{
+        const grid = DIGITOS[d];
+        const rows = grid.length;
+        const cols = grid[0].length;
+
+        for(let r=0;r<rows;r++){
+          for(let c=0;c<cols;c++){
+            if(grid[r][c]==="1"){
+              const dot = document.createElement("span");
+              dot.className = "dot";
+              const x = offsetX + c*cell + (Math.random()*jitter*2 - jitter);
+              const y = r*cell + (Math.random()*jitter*2 - jitter);
+              const size = 2.2 + Math.random()*1.6;
+              dot.style.width = size+"px";
+              dot.style.height = size+"px";
+              dot.style.left = x+"px";
+              dot.style.top  = y+"px";
+              dot.style.animationDuration = (1.1 + Math.random()*1.6) + "s";
+              mensaje143.appendChild(dot);
+            }
+          }
+        }
+        offsetX += cols*cell + gap;
+      });
+    }
+
+    function mostrar143(){
+      construir143();
+      const top = 8 + Math.random()*10;
+      mensaje143.style.top = top+"vh";
+      mensaje143.classList.add("show");
+      setTimeout(()=>mensaje143.classList.remove("show"), 4200);
+    }
+
+    setInterval(()=>{
+      if(Math.random()<0.35) mostrar143();
+    }, 9000);
+
+  });
+})();
+</script>
+</body>
+</html>
